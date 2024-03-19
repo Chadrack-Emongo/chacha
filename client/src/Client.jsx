@@ -1,0 +1,130 @@
+import React, { useState } from 'react'
+// import PropTypes from 'prop-Types';
+import Title from './Title'
+import Button from './Button'
+import Option from './Option'
+import Form from './Form'
+import Inputlabel from './Inputlabel'
+
+export default function Client() {
+    const [Nom, setNom] = useState("")
+    const [NomErreur, setNomErreur] = useState("")
+    const [prenom, setPrenom] = useState("")
+    const [PrenomErreur, setPrenomErreur] = useState("")
+    const [Telephone, setTelephone] = useState("")
+    const [TelephoneErreur, setTelephoneErreur] = useState("")
+    const [NotesInternes, setNotesInternes] = useState("")
+    const [NotesInternesErreur, setNotesInternesErreur] = useState("")
+    const [ObjetsPayers, setObjetsPayers] = useState("")
+    const [ObjetsPayersErreur, setObjetsPayersErreur] = useState("")
+    // const [data, setData] = useState([])
+    // setData([{
+    //     Nom:"chacha",
+    //     prenom:"Emongo",
+    //     Telephone:"0970404444",
+    //     NotesInternes:"Bonjour",
+    //     ObjetsPayers:"chemises",
+    // }])
+ 
+    const validerNom = () => {
+        const NomRegex = /^([a-zéèçàùïêëîA-ZÉÈÇÀÙÏÊËÎ -]){3,20}$/;
+        if (Nom === "") {
+            setNomErreur('Le nom est requis');
+        } else if (!NomRegex.test(Nom)) {
+            setNomErreur('Le nom ne peut contenir que des lettres');
+        }
+        else {
+            setNomErreur('');
+        }
+    };
+
+
+    const validerPrenom = () => {
+        const PrenomRegex = /^([a-zéèçàùïêëîA-ZÉÈÇÀÙÏÊËÎ -]){3,20}$/;
+        if (prenom === "") {
+            setPrenomErreur('Le prenom est requis');
+        } else if (!PrenomRegex.test(prenom)) {
+            setPrenomErreur('Le prenom ne peut contenir que des lettres');
+        }
+        else {
+            setPrenomErreur('');
+        }
+    };
+
+    const validerTelephone = () => {
+        const regexTelephone = /^(080|081|082|084|085|089|090|091|097|098|099)([0-9]){7}$/;
+        if (Telephone === "") {
+            setTelephoneErreur('Le Numero est requis');
+        } else if (!regexTelephone.test(Telephone)) {
+            setTelephoneErreur('Le Numeron doit contenir 10 chiffres');
+        }
+        else {
+            setTelephoneErreur('');
+        }
+    };
+
+    const validerNotesInternes = () => {
+        if (NotesInternes === "") {
+            setNotesInternesErreur('Les notes internes sont requis');
+        }
+        else {
+            setNotesInternesErreur('');
+        }
+    };
+
+    const validerObjetsPayers = () => {
+        if (NotesInternes === "") {
+            setObjetsPayersErreur('Les Objets Payers sont requis');
+        }
+        else {
+            setObjetsPayersErreur('');
+        }
+    }
+
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (validerNom(Nom)) {
+            setNomErreur('Nom valide :', Nom);
+        } else if (validerPrenom(prenom)) {
+            setPrenomErreur('Prenom valide :', prenom);
+        } else if (validerTelephone(Telephone)) {
+            setTelephoneErreur('Telephone valide :', Telephone);
+        } else if (validerNotesInternes(NotesInternes)) {
+            setNotesInternesErreur('Notes Internes valide :', NotesInternes);
+        } else if (validerObjetsPayers(ObjetsPayers)) {
+            setObjetsPayersErreur('Objets Payers valide :', ObjetsPayers);
+        }
+    };
+
+
+
+    return (
+        <div className='p-5'>
+            <div>
+                <div className='bg-white -mt-4 -mb-10 p-6 flex justify-center'>
+                    <div className='flex justify-center p-5 bg-slate-800 w-2/4 rounded-2xl'>
+                        <div className='flex justify-center mb-10'>
+                            <Title styles=" text-white mb-10 font-black font-[lemon] text-3xl" Title="Admin" />
+                        </div>
+                        <div className='mt-14'>
+                            <Form onSubmit={handleSubmit} >
+                                <Inputlabel span="text-white" style="text-white mt-6 font-bold" value={Nom} onChange={(e) => setNom(e.target.value)} name="Nom" erreur={NomErreur} placeholder="Le nom du client" />
+                                <Inputlabel span="text-white" style="text-white mt-6 font-bold" value={prenom} onChange={(e) => setPrenom(e.target.value)} erreur={PrenomErreur} name="Prenom" placeholder="Le Prenom du client" />
+                                <Inputlabel span="text-white" style="text-white mt-6 font-bold" value={Telephone} onChange={(e) => setTelephone(e.target.value)} erreur={TelephoneErreur} name="Téléphone" placeholder="Numero Téléphone" />
+                                <Inputlabel span="text-white" style="text-white mt-6 font-bold" name="Date d'inscription" types="date" placeholder="" />
+                                <Inputlabel span="text-white" style="text-white mt-6 font-bold" value={NotesInternes} onChange={(e) => setNotesInternes(e.target.value)} erreur={NotesInternesErreur} name="Notes Internes" placeholder="Notes sur le client" />
+                                <Inputlabel span="text-white" style="text-white mt-6 font-bold" value={ObjetsPayers} onChange={(e) => setObjetsPayers(e.target.value)} erreur={ObjetsPayersErreur} name="Objets payer" placeholder="Objets Payers" />
+                                <div className='flex justify-center'>
+                                    <Button styles="text-xl text-slate-950 mt-10 font-black rounded-full w-64 h-12 bg-white border-solid border-2 border-slate-900">
+                                        Enregistrer
+                                    </Button>
+                                </div>
+                            </Form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
