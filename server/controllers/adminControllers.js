@@ -60,7 +60,7 @@ const updateAdmin = async (req, res)=> {
             numero_telephoneone: req.body.numero_telephoneone,
             email: req.body.email,
             username: req.body.username,
-            password: password
+            password: req.body.password
         }
     }).then();
     res.json(admin)

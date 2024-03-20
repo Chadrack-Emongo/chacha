@@ -23,6 +23,7 @@ export default function App({ children }) {
         </div>
         <div className='flex'>
           <div className='w-1/6'>
+            
             <Option />
           </div>
           <div className='w-full'>

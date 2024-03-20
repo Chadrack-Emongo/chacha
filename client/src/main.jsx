@@ -13,7 +13,7 @@ import Admin from './Admin.jsx';
 import Connexion from './Connexion.jsx';
 import ListeAdmin from './ListeAdmin.jsx';
 import ListeClient from './ListeClient.jsx';
-import Contrat from './Contrat.jsx';
+import CreerContratClient from './CreerContratClient.jsx';
 import Parametre from './Parametre.jsx';
 import Client from './Client.jsx';
 
@@ -43,7 +43,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/contrat",
-        element: <Contrat />,
+        element: <CreerContratClient />,
       },
       {
         path: "/parametre",
