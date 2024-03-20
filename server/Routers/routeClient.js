@@ -22,3 +22,25 @@ const createClient = await Prisma.Client.create({
 const readClientn = await 
 Prisma.Client.read({
 })
+
+// la mise à jour du client
+const updateClient = await Prisma.Client.update({
+  where: {
+    id: req.params.id
+  },
+  data: {
+    name: req.body.name,
+    lastName: req.body.lastName,
+    phone: req.body.phone,
+    date: req.body.date,
+    notes: req.body.notes,
+    objects:req.body.objects
+  }
+})
+
+// la suppression du client
+const deleteClient = await Prisma.Client.delete({
+  where: {
+    id: req.params.id
+  }
+})
