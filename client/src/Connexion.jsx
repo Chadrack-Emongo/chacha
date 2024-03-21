@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+import axios from 'axios'
 import Form from './Form'
 import Inputlabel from './Inputlabel'
+import Accueil from './Accueil'
 import Button from './Button'
 import Title from './Title'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 export default function Connexion() {
@@ -11,6 +13,11 @@ export default function Connexion() {
     const [UsernameErreur, setUsernameErreur] = useState("")
     const [Password, setPassword] = useState("")
     const [PasswordErreur, setPasswordErreur] = useState("")
+    const [isLogin, setIsLogin] = useState("")
+    const usernameRef = useRef(null);
+    const passwordRef = useRef(null);
+
+    const navigateTo = useNavigate();
 
     const validerUsername = () => {
         const regexUsername = /^[a-zA-Z0-9]{5,20}$/;
@@ -45,6 +52,32 @@ export default function Connexion() {
         }
     };
 
+    const handleLogin = async (e)=>{
+        e.preventDefault();
+        const usernameValue = usernameRef.current.Value;
+        const passwordValue = PasswordRef.current.Value;
+
+        try {
+            const response = await axios.post('https://localhost:8002/...', {
+                username: usernameValue,
+                password: passwordValue
+            });
+            if (response.status===201){
+                !isLogin ? setIsLogin(true) : setIsLogin(false);
+            }else {
+                console.error("Nom d'utilisateur ou mot de passe incorrect");
+            }
+        }catch(error){
+            console.error("Erreur lors de la connexion", error);
+        }
+    };
+
+    if (isLogin){
+        return(
+            <Accueil/>
+        )
+    }
+
     return (
         <div className='flex justify-center bg-slate-950 p-[234px] '>
             <div className='bg-slate-300 w-2/5 rounded-2xl p-10 '>
@@ -53,10 +86,10 @@ export default function Connexion() {
                 </div>
                 <div>
                     <Form onSubmit={handleSubmit}>
-                        <Inputlabel span="text-red-500" style="text-slate-950 mt-6 font-bold" value={Username} onChange={(e) => setUsername(e.target.value)} erreur={UsernameErreur} name="Nom d'utilisateur" placeholder="Votre Nom d'utilisateur" />
-                        <Inputlabel span="text-red-500" style="text-slate-950 mt-6 font-bold" value={Password} onChange={(e) => setPassword(e.target.value)} erreur={PasswordErreur} name="Mot de passe" types="password" placeholder="Votre Mot de passe" />
+                        <Inputlabel span="text-red-500" ref={usernameRef} style="text-slate-950 mt-6 font-bold" value={Username} onChange={(e) => setUsername(e.target.value)} erreur={UsernameErreur} name="Nom d'utilisateur" placeholder="Votre Nom d'utilisateur" />
+                        <Inputlabel span="text-red-500" ref={passwordRef} style="text-slate-950 mt-6 font-bold" value={Password} onChange={(e) => setPassword(e.target.value)} erreur={PasswordErreur} name="Mot de passe" types="password" placeholder="Votre Mot de passe" />
                         <div className='flex justify-center'>
-                            <Button styles="text-slate-950 text-2xl mt-10 text-black font-bold rounded-full w-64 h-12 bg-white border-solide border-2 border-slate-950 ">
+                            <Button onClick={handleLogin} styles="text-slate-950 text-2xl mt-10 text-black font-bold rounded-full w-64 h-12 bg-white border-solide border-2 border-slate-950 ">
                                 Connexion
                             </Button>
                         </div>
