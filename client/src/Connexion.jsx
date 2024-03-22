@@ -56,9 +56,9 @@ export default function Connexion() {
         e.preventDefault();
         const usernameValue = usernameRef.current.Value;
         const passwordValue = passwordRef.current.Value;
-
+console.log();
         try {
-            const response = await axios.post('https://localhost:8002/...', {
+            const response = await axios.post('http://localhost:8002/signInAdmin', {
                 username: usernameValue,
                 password: passwordValue
             });
@@ -73,9 +73,7 @@ export default function Connexion() {
     };
 
     if (isLogin){
-        return(
-            <Accueil/>
-        )
+        navigateTo("/");
     }
 
     return (
