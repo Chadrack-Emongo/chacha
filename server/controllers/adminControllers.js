@@ -1,82 +1,112 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const express = require("express");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const app = express();
-const router = require("../Routers/userRouter");
+const router = require("../Routers/contratRoutes");
 
 
 // la connexion
-// app.post('/login', (req, res) => {
-//   const admin = admins.find(admin => admin.username === req.body.username);
-//   if (admin == null) {
-//     return res.status(400).send({
-//     message: "Nom d'utlisateur ou le mot de passe incorecte"
-//     });
-//   }
+const signInAdmin = async (req, res) => {
+    const { username, password } = req.body;
 
-//   try {
-//     if (bcrypt.compareSync(req.body.password, admin.password)) {
-//       const accessToken = jwt.sign(user, process.env.TOKEN_SECRET);
-//       res.json({ accessToken: accessToken });
-//     } else {
-//       res.send({
-//         message: "Nom d'utlisateur ou le mot de passe incorecte"
-//       })
-//     }
-//   } catch {
-//     res.status(500).send();
-//   }
-// });
+    try {
+        const user = await prisma.user.findUnique({
+            where: { username },
+        });
 
-const createAdmin = async (req, res) => {
-    const admin = await prisma.admin.create({
-        data: {
-            nom: req.body.nom,
-            postnom: req.body.postnom,
-            numero_telephone: req.body.numero_telephone,
-            email: req.body.email,
-            username: req.body.username,
-            password: req.body.password
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            return res.status(401).json({ message: 'Nom d’utilisateur ou mot de passe incorrect.' });
         }
-    }).then();
-    res.json(admin)
-}
+
+        const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '2h' });
+
+        res.json({ message: 'Connexion réussie !', token });
+
+        if (user && await bcrypt.compare(password, user.password)) {
+            return res.status(201).json({ message: "Les mots de passe correspondent" });
+        } else {
+            return res.status(401).json({ message: "Les mots de passe ne correspondent pas" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la connexion.', error });
+    }
+};
+
+// creation d'un admin
+const createAdmin = async (req, res) => {
+    const { nom, postnom, numero_telephone, email, username, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 8);
+
+    try {
+        const admin = await prisma.admin.create({
+            data: {
+                nom,
+                postnom,
+                numero_telephone,
+                email, username,
+                password: hashedPassword
+            },
+        });
+        res.status(201).json({ message: 'Admin créé avec succès !', admin });
+    } catch (error) {
+        res.status(400).json({ message: 'Veillez verifier vos informations.', error });
+    }
+};
 
 // readAdmin
 const readAdmin = async (req, res) => {
-    const admin = await prisma.admin.findMany();
-    res.json(admin)
-}
+
+    try {
+        const admins = await prisma.admin.findMany();
+        res.json(admins);
+    } catch (error) {
+        res.status(500).json({ message: 'Erreur lors de la récupération des admins.', error });
+    }
+};
 
 // updateAdmin
-const updateAdmin = async (req, res)=> {
-    const admin = await prisma.admin.update({
-        where: {
-            id: req.params.id
-        },
-        data: {
-            nom: req.body.nom,
-            postnom: req.body.postnom,
-            numero_telephoneone: req.body.numero_telephoneone,
-            email: req.body.email,
-            username: req.body.username,
-            password: req.body.password
-        }
-    }).then();
-    res.json(admin)
-}
+const updateAdmin = async (req, res) => {
+    const { id } = req.params;
+    const { nom, postnom, numero_telephone, email, username, password } = req.body;
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 8);
+        const admin = await prisma.admin.update({
+            where: { id: parseInt(id) },
+            data: {
+                nom,
+                postnom,
+                numero_telephone,
+                email,
+                username,
+                password: hashedPassword
+            },
+        });
+        res.json({ message: 'Admin mis à jour avec succès !', admin });
+    } catch (error) {
+        res.status(400).json({ message: 'Erreur lors de la mise à jour de l’admin.', error });
+    }
+};
 
 // deleteAdmin
-const deleteAdmin = async (req, res)=> {
-    const admin = await prisma.admin.delete({
-        where: {
-            id: req.params.id
-        }
-    }).then();
-    res.json(admin)
-}
+const deleteAdmin = async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      await prisma.admin.delete({
+        where: { id: parseInt(id) },
+      });
+      res.json({ message: 'Admin supprimé avec succès !' });
+    } catch (error) {
+      res.status(500).json({ message: 'Erreur lors de la suppression de l’admin.', error });
+    }
+  };
+  
 
 module.exports = {
+    signInAdmin,
     createAdmin,
     readAdmin,
     updateAdmin,
