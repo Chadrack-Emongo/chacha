@@ -8,31 +8,60 @@ const router = require("../Routers/contratRoutes");
 
 
 // la connexion
+// const signInAdmin = async (req, res) => {
+//     const { username, password } = req.body;
+// console.log(req.body);
+//     try {
+//         const admin = await prisma.admin.findUnique({
+//             where: { username },
+//         });
+
+//         if (!admin || !(await bcrypt.compare(password, admin.password))) {
+//             return res.status(401).json({ message: 'Nom d’utilisateur ou mot de passe incorrect.' });
+//         }
+
+//         const token = jwt.sign({ userId: admin.id }, secretKey, { expiresIn: '2h' });
+
+//         res.json({ message: 'Connexion réussie !', token });
+
+//         if (admin && await bcrypt.compare(password, admin.password)) {
+//             return res.status(201).json({ message: "Les mots de passe correspondent" });
+//         } else {
+//             return res.status(401).json({ message: "Les mots de passe ne correspondent pas" });
+//         } 
+//     } catch (error) {
+//         res.status(500).json({ message: 'Erreur lors de la connexion.', error });
+//     }
+// };
+
 const signInAdmin = async (req, res) => {
     const { username, password } = req.body;
-
     try {
-        const user = await prisma.user.findUnique({
+        const admin = await prisma.admin.findUnique({
             where: { username },
         });
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
+        if (!admin || !(await bcrypt.compare(password, admin.password))) {
             return res.status(401).json({ message: 'Nom d’utilisateur ou mot de passe incorrect.' });
         }
-
-        const token = jwt.sign({ userId: user.id }, secretKey, { expiresIn: '2h' });
-
-        res.json({ message: 'Connexion réussie !', token });
-
-        if (user && await bcrypt.compare(password, user.password)) {
-            return res.status(201).json({ message: "Les mots de passe correspondent" });
-        } else {
-            return res.status(401).json({ message: "Les mots de passe ne correspondent pas" });
+        if ((await bcrypt.compare(password, admin.password))) {
+            res.json({ message: 'Connexion réussie !', admin: admin });
         }
+        // const token = jwt.sign({ userId: admin.id }, secretKey, { expiresIn: '2h' });
+
+        // res.json({ message: 'Connexion réussie !', token });
+
+
+        // if (admin && await bcrypt.compare(password, admin.password)) {
+        //     return res.status(201).json({ message: "Les mots de passe correspondent" });
+        // } else {
+        //     return res.status(401).json({ message: "Les mots de passe ne correspondent pas" });
+        // }
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la connexion.', error });
     }
 };
+
 
 // creation d'un admin
 const createAdmin = async (req, res) => {
