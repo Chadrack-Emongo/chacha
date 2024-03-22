@@ -55,7 +55,7 @@ export default function Connexion() {
     const handleLogin = async (e)=>{
         e.preventDefault();
         const usernameValue = usernameRef.current.Value;
-        const passwordValue = PasswordRef.current.Value;
+        const passwordValue = passwordRef.current.Value;
 
         try {
             const response = await axios.post('https://localhost:8002/...', {
