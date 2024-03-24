@@ -40,7 +40,7 @@ const createClient = async (req, res) => {
     }
 };
 
-
+ 
 // l'affichage des clients
 // async function readClient(req, res) {
 //     const client = await prisma.client.findMany();
@@ -107,13 +107,26 @@ const updateClient = async (req, res) => {
 //     res.json(client)
 // }
 
-const deleteClient = async (req, res) => {
-    const { id } = req.params;
+// const deleteClient = async (req, res) => {
+//     const { id } = req.params;
 
+//     try {
+//         await prisma.client.delete({
+//             where: { id: parseInt(id) },
+//         });
+//         res.json({ message: 'Client supprimé avec succès !' });
+//     } catch (error) {
+//         res.status(500).json({ message: 'Erreur lors de la suppression du client.', error });
+//     }
+// };
+
+const deleteClient = async (req, res) => {
+    const id = parseInt(req.params.id);
+    console.log("id : ", id);
     try {
-        await prisma.client.delete({
-            where: { id: parseInt(id) },
-        });
+        const client = await prisma.client.delete({
+            where: { id_client: id }
+        }).then();
         res.json({ message: 'Client supprimé avec succès !' });
     } catch (error) {
         res.status(500).json({ message: 'Erreur lors de la suppression du client.', error });

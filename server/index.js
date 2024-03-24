@@ -1,6 +1,7 @@
 const express = require('express');
 const routeleControllers = require('./controllers/adminControllers');
 const routeClient= require('./Routers/routeClient')
+const authRoute = require('./Routers/authRoute');
 const app = express();
 const port = 8002;
 

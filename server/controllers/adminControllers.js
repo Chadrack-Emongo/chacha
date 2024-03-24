@@ -1,5 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
+const cors = require ('cors');
 const express = require("express");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
@@ -103,7 +104,7 @@ const updateAdmin = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 8);
         const admin = await prisma.admin.update({
-            where: { id: parseInt(id) },
+            where: { id_admin: parseInt(id) },
             data: {
                 nom,
                 postnom,
@@ -121,18 +122,18 @@ const updateAdmin = async (req, res) => {
 
 // deleteAdmin
 const deleteAdmin = async (req, res) => {
-    const { id } = req.params;
-  
+    const id = parseInt(req.params.id);
+    console.log("id : ", id);
     try {
-      await prisma.admin.delete({
-        where: { id: parseInt(id) },
-      });
-      res.json({ message: 'Admin supprimé avec succès !' });
+        const admin = await prisma.admin.delete({
+            where: { id_admin: id }
+        }).then();
+        res.json({ message: 'Admin supprimé avec succès !' });
     } catch (error) {
-      res.status(500).json({ message: 'Erreur lors de la suppression de l’admin.', error });
+        res.status(500).json({ message: 'Erreur lors de la suppression de l’admin.', error });
     }
-  };
-  
+};
+
 
 module.exports = {
     signInAdmin,

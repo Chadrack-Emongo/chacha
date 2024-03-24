@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import axios from 'axios'
 import Form from './Form'
-import Inputlabel from './Inputlabel'
+import Inputlabel from '/src/Inputlabel.jsx';
 import Accueil from './Accueil'
 import Button from './Button'
 import Title from './Title'
@@ -52,27 +52,26 @@ export default function Connexion() {
         }
     };
 
-    const handleLogin = async (e)=>{
+    const handleLogin = async (e) => {
         e.preventDefault();
         const usernameValue = usernameRef.current.Value;
         const passwordValue = passwordRef.current.Value;
-console.log();
         try {
             const response = await axios.post('http://localhost:8002/signInAdmin', {
                 username: usernameValue,
                 password: passwordValue
             });
-            if (response.status===201){
+            if (response.status === 201) {
                 !isLogin ? setIsLogin(true) : setIsLogin(false);
-            }else {
+            } else {
                 console.error("Nom d'utilisateur ou mot de passe incorrect");
             }
-        }catch(error){
+        } catch (error) {
             console.error("Erreur lors de la connexion", error);
         }
     };
 
-    if (isLogin){
+    if (isLogin) {
         navigateTo("/");
     }
 

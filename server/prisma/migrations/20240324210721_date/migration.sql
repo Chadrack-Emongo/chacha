@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Contrat" ALTER COLUMN "date_finale" SET DEFAULT CURRENT_TIMESTAMP;
+
+-- AlterTable
+ALTER TABLE "Paiement" ALTER COLUMN "date_paie" SET DEFAULT CURRENT_TIMESTAMP;
