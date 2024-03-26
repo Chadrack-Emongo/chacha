@@ -1,106 +1,105 @@
-import React, { useRef, useState } from 'react'
-import axios from 'axios'
-import Form from './Form'
-import Inputlabel from '/src/Inputlabel.jsx';
-import Accueil from './Accueil'
-import Button from './Button'
-import Title from './Title'
-import { Link, useNavigate } from 'react-router-dom'
-
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Title from './Title';
 
 export default function Connexion() {
-    const [Username, setUsername] = useState("")
-    const [UsernameErreur, setUsernameErreur] = useState("")
-    const [Password, setPassword] = useState("")
-    const [PasswordErreur, setPasswordErreur] = useState("")
-    const [isLogin, setIsLogin] = useState("")
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [error, setError] = useState('');
+    const [isLogin, setIsLogin] = useState(false);
+    const [formSubmitted, setFormSubmitted] = useState(false);
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
-
     const navigateTo = useNavigate();
 
-    const validerUsername = () => {
-        const regexUsername = /^[a-zA-Z0-9]{5,20}$/;
-        if (Username === "") {
-            setUsernameErreur('Le nom d\'utilisateur est requis');
-        } else if (!regexUsername.test(Username)) {
-            setUsernameErreur('Le nom d\'utilisateur ne peut contenir que des lettres et des chiffres');
+    const validateInputs = () => {
+        if (!username || !password) {
+            setError('Veuillez remplir tous les champs.');
+            return false;
         }
-        else {
-            setUsernameErreur('');
-        }
+        return true;
     };
 
-    const validerPassword = () => {
-        const regexPassword = /^[a-zA-Z0-9]{3,20}$/;
-        if (Password === "") {
-            setPasswordErreur('Le mot de passe est requis');
-        } else if (!regexPassword.test(Password)) {
-            setPasswordErreur('Le mot de passe ne peut contenir que des lettres et des chiffres');
+    useEffect(() => {
+        if (formSubmitted) {
+            const usernameValue = usernameRef.current.value;
+            const passwordValue = passwordRef.current.value;
+
+            console.log(username);
+            console.log(usernameValue);
+
+            const response = axios.post('http://localhost:8002/signInAdmin', {
+                username: usernameValue.current,
+                password: passwordValue.current
+            })
+                .then(response => {
+                    if (response.status === 201) {
+                        setIsLogin(true);
+                    } else {
+                        console.error("Nom d'utilisateur ou mot de passe incorrect");
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur lors de la connexion", error);
+                });
         }
-        else {
-            setPasswordErreur('');
-        }
-    };
+    }, [formSubmitted]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (validerUsername(Username)) {
-            setUsernameErreur('Nom valide :', Username);
-        } else if (validerPassword(Password)) {
-            setPasswordErreur('Password valide :', Password);
-        }
-    };
+        setError('');
+        setFormSubmitted(true);
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        const usernameValue = usernameRef.current.Value;
-        const passwordValue = passwordRef.current.Value;
-        try {
-            const response = await axios.post('http://localhost:8002/signInAdmin', {
-                username: usernameValue,
-                password: passwordValue
-            });
-            if (response.status === 201) {
-                !isLogin ? setIsLogin(true) : setIsLogin(false);
+        if (validateInputs()) {
+            if (username === 'admin' && password === 'admin') {
+                setLoggedIn(true);
             } else {
-                console.error("Nom d'utilisateur ou mot de passe incorrect");
+                setError("Nom d'utilisateur ou mot de passe incorrect.");
             }
-        } catch (error) {
-            console.error("Erreur lors de la connexion", error);
         }
     };
 
-    if (isLogin) {
-        navigateTo("/");
-    }
+    useEffect(() => {
+        if (isLogin) {
+            navigateTo("/");
+        }
+    }, [isLogin]);
 
     return (
-        <div className='flex justify-center bg-slate-950 p-[234px] '>
-            <div className='bg-slate-300 w-2/5 rounded-2xl p-10 '>
+        <div className='flex justify-center bg-slate-950 p-[234px]'>
+            <div className='bg-white -mt-4 -mb-10 p-6 flex justify-center'>
                 <div className='flex justify-center font-[lemon] text-3xl text-slate-950 font-black'>
                     <Title Title="Infinity energy" />
                 </div>
-                <div>
-                    <Form onSubmit={handleSubmit}>
-                        <Inputlabel span="text-red-500" ref={usernameRef} style="text-slate-950 mt-6 font-bold" value={Username} onChange={(e) => setUsername(e.target.value)} erreur={UsernameErreur} name="Nom d'utilisateur" placeholder="Votre Nom d'utilisateur" />
-                        <Inputlabel span="text-red-500" ref={passwordRef} style="text-slate-950 mt-6 font-bold" value={Password} onChange={(e) => setPassword(e.target.value)} erreur={PasswordErreur} name="Mot de passe" types="password" placeholder="Votre Mot de passe" />
-                        <div className='flex justify-center'>
-                            <Button onClick={handleLogin} styles="text-slate-950 text-2xl mt-10 text-black font-bold rounded-full w-64 h-12 bg-white border-solide border-2 border-slate-950 ">
-                                Connexion
-                            </Button>
+                <div> 
+                    <form method='post'>
+                        <div className=''>
+                            <label className='text-slate-950 mt-6 font-bold'>Nom d'utilisateur:</label>
+                            <input
+                                ref={usernameRef}
+                                className='w-96 mt-2 p-3 rounded-xl h-12 text-black font-bold border border-red-400' placeholder="Votre Nom d'utilisateur"
+                                type="text" name='username'
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
                         </div>
                         <div>
-                            <Link to="/register">
-                                <div className='text-xl grid text-slata-950 font-[lemon] flex justify-center mt-10'>
-                                    <Title Title="Vous avez deja un compte ?" />
-                                    <Title Title="Identifiez-vous ici !" />
-                                </div>
-                            </Link>
+                            <label className='text-slate-950 mt-6 font-bold'>Mot de passe:</label>
+                            <input
+                                ref={passwordRef}
+                                className='w-96 mt-2 p-3 rounded-xl h-12 text-black font-bold border border-red-400' placeholder="Votre mot de pass" name='password'
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
                         </div>
-                    </Form>
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
+                        <button onClick={handleSubmit} className='text-slate-950 text-2xl mt-10 text-black font-bold rounded-full w-64 h-12 bg-white border-solide border-2 border-slate-950' type="button">Se connecter</button>
+                    </form>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
