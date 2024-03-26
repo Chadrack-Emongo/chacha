@@ -1,11 +1,18 @@
 const express = require('express');
+const cors = require('cors');
+const crypto = require('crypto');
+const dotenv = require('dotenv').config();
+const generateSecreteKey= require ('./controllers/generateSecretKey')
 const routeleControllers = require('./controllers/adminControllers');
 const routeClient= require('./Routers/routeClient')
 const authRoute = require('./Routers/authRoute');
 const app = express();
 const port = 8002;
+const secretKeys= process.env.SECRET_KEY;
+
 
 app.use(express.json());
+app.use(cors()); 
 
 // connexion de l'admin
 app.post("/signInAdmin", routeleControllers.signInAdmin);

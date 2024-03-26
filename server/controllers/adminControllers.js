@@ -1,11 +1,13 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const cors = require ('cors');
+const cors = require('cors');
 const express = require("express");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const app = express();
 const router = require("../Routers/contratRoutes");
+
+app.use(cors());
 
 
 // la connexion
@@ -35,33 +37,116 @@ const router = require("../Routers/contratRoutes");
 //     }
 // };
 
+// const signInAdmin = async (req, res) => {
+//     const { username, password } = req.body;
+//     //  try {
+//         const admin = await prisma.admin.findUnique({
+//             where: { username : username },
+//         });
+
+//         if (!admin) {
+//             return res.status(401).json({ message: 'Nom d’utilisateur ou mot de passe incorrect.' });
+//         }
+//         console.log(req.body);
+//         if ((bcrypt.compare(password, admin.password))) {
+//             res.json({ message: 'Connexion réussie !', admin: admin });
+//         }
+//         // const token = jwt.sign({ userId: admin.id }, secretKey, { expiresIn: '2h' });
+
+//         // res.json({ message: 'Connexion réussie !', token });
+
+
+//         // if (admin && await bcrypt.compare(password, admin.password)) {
+
+//         //     return res.status(201).json({ message: "Les mots de passe correspondent" });
+//         // if (admin && await bcrypt.compare(password, admin.password)) {
+//         //     return res.status(201).json({ message: "Les mots de passe correspondent" });
+//         // } else {
+//         //     return res.status(401).json({ message: "Les mots de passe ne correspondent pas" });
+//         // }
+//     // } catch (error) { 
+//     //     res.status(501).json({ message: 'Erreur lors de la connexion.', error });
+//     // }
+// };
+
+// const signInAdmin = async (req, res) => {
+//     const { username, password } = req.body;
+//     try {
+//         const admin = await prisma.admin.findUnique({
+//             where: {
+//                 username: username,
+//                 password: password,
+//             }
+//         });
+
+//         if (!admin) {
+//             return res.status(404).json({ error: "Nom d'utilisateur incorrect" });
+//         }
+
+//     } catch (error) {
+//         console.error("Erreur lors de la recherche de l'admin:", error);
+//         res.status(500).json({ error: "Une erreur s'est produite lors de la recherche de l'admin" });
+//     }
+// };
+
+
 const signInAdmin = async (req, res) => {
-    const { username, password } = req.body;
+    const username = req.body.username;
+    const password = req.body.password;
+console.log(req.body);
+    if (!username || !password) {
+        return res.status(400).json({ error: "Le nom d'utilisateur et le mot de passe sont requis" });
+    }
+
     try {
         const admin = await prisma.admin.findUnique({
-            where: { username },
+            where: { username : username }
         });
 
-        if (!admin || !(await bcrypt.compare(password, admin.password))) {
-            return res.status(401).json({ message: 'Nom d’utilisateur ou mot de passe incorrect.' });
+        console.log(admin);
+
+        if (!admin) {
+            return res.status(404).json({ error: "Nom d'utilisateur introuvable" });
         }
-        if ((await bcrypt.compare(password, admin.password))) {
-            res.json({ message: 'Connexion réussie !', admin: admin });
+
+        const isPasswordValid = await bcrypt.compare(password, admin.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ error: "Mot de passe incorrect" });
         }
-        // const token = jwt.sign({ userId: admin.id }, secretKey, { expiresIn: '2h' });
 
-        // res.json({ message: 'Connexion réussie !', token });
+        const token = jwt.sign({ id: admin.id }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        res.status(200).json({ token });
 
-
-        // if (admin && await bcrypt.compare(password, admin.password)) {
-        //     return res.status(201).json({ message: "Les mots de passe correspondent" });
-        // } else {
-        //     return res.status(401).json({ message: "Les mots de passe ne correspondent pas" });
-        // }
     } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la connexion.', error });
+        console.error("Erreur lors de la connexion de l'admin:", error);
+        res.status(500).json({ error: "Une erreur s'est produite lors de la connexion de l'admin" });
     }
 };
+
+
+
+
+// const signInAdmin = async (req, res) => {
+//     // Extraction du nom d'utilisateur et du mot de passe à partir de la requête
+//     const { username, password } = req.body;
+
+//     // Recherche de l'administrateur dans la base de données par nom d'utilisateur
+//     const admin = await prisma.admin.findFirst({
+//         where: { username : username },
+//     });
+
+//     // Vérification si l'administrateur existe et si le mot de passe correspond
+//     if (!admin || !(await bcrypt.compare(password, admin.password))) {
+//         // Si l'administrateur n'existe pas ou si les mots de passe ne correspondent pas
+//         return res.status(401).json({ message: 'Nom d’utilisateur ou mot de passe incorrect.' });
+//     }
+//     // Si les mots de passe correspondent
+//     if ((await bcrypt.compare(password, admin.password))) {
+//         // Connexion réussie
+//         res.json({ message: 'Connexion réussie !', admin: admin });
+//     }  
+// };
+
 
 
 // creation d'un admin
