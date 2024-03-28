@@ -14,26 +14,27 @@ datasource db {
 }
 
 model Admin {
-  id_admin         Int       @id @default(autoincrement())
-  nom              String
-  postnom          String
-  email            String    @unique
-  numero_telephone String
-  username         String    @unique
-  password         String
-  Contrats         Contrat[]
+  id_admin  Int       @id @default(autoincrement())
+  nom       String
+  postnom   String
+  email     String    @unique
+  telephone String
+  username  String    @unique
+  password  String
+  Contrats  Contrat[]
+  Token     Token[]
 }
 
 model Client {
-  id_client        Int        @id @default(autoincrement())
-  nom              String
-  postnom          String
-  numero_telephone String
-  date             DateTime   @default(now())
-  note             String?
-  objet            String
-  Paiements        Paiement[]
-  Contrats         Contrat[]
+  id_client Int        @id @default(autoincrement())
+  nom       String
+  postnom   String
+  telephone String
+  date      DateTime   @default(now())
+  note      String?
+  objet     String
+  Paiements Paiement[]
+  Contrats  Contrat[]
 }
 
 model Paiement {
@@ -61,4 +62,12 @@ model Contrat {
   id_client   Int
   Admin       Admin    @relation(fields: [id_admin], references: [id_admin])
   Client      Client   @relation(fields: [id_client], references: [id_client])
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  token     String
+  createdAt DateTime @default(now())
+  Admin     Admin    @relation(fields: [id_admin], references: [id_admin])
+  id_admin  Int
 }

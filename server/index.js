@@ -12,6 +12,7 @@ const secretKeys= process.env.SECRET_KEY;
 
 
 app.use(express.json());
+app.use(express.urlencoded({extended:true}))
 app.use(cors()); 
 
 // connexion de l'admin
