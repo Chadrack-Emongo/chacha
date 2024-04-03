@@ -6,6 +6,7 @@ const generateSecreteKey= require ('./controllers/generateSecretKey')
 const routeleControllers = require('./controllers/adminControllers');
 const routeClient= require('./Routers/routeClient')
 const authRoute = require('./Routers/authRoute');
+const contratController = require('./controllers/contratController');
 const app = express();
 const port = 8002;
 const secretKeys= process.env.SECRET_KEY;
@@ -41,6 +42,12 @@ app.put("/updateClient/:id", routeClient.updateClient);
 
 // La suppression d'un client
 app.delete("/deleteClient/:id", routeClient.deleteClient);
+
+// Créer un nouveau contrat
+app.post('/createContrat', contratController.createContrat);
+
+// Enregistrer un paiement
+app.post('/:contratId/paiements', contratController.enregistrerPaiement);
 
 
 

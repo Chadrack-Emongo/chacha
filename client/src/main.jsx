@@ -13,7 +13,7 @@ import Admin from './Admin.jsx';
 import Connexion from './Connexion.jsx';
 import ListeAdmin from './ListeAdmin.jsx';
 import ListeClient from './ListeClient.jsx';
-import CreerContratClient from './CreerContratClient.jsx';
+import CreerContratClient from './Contrat.jsx';
 import Parametre from './Parametre.jsx';
 import Client from './Client.jsx';
 

@@ -21,14 +21,14 @@ const userRouter = require('./routeClient');
 // }
 
 const createClient = async (req, res) => {
-    const { nom, postnom, numero_telephone, date, note, objet } = req.body;
+    const { nom, postnom, telephone, date, note, objet } = req.body;
 
     try {
         const client = await prisma.client.create({
             data: {
                 nom,
                 postnom,
-                numero_telephone,
+                telephone,
                 date,
                 note,
                 objet
@@ -77,7 +77,7 @@ const readClient = async (req, res) => {
 
 const updateClient = async (req, res) => {
     const { id } = req.params;
-    const { nom, postnom, numero_telephone, date, note, objet } = req.body;
+    const { nom, postnom,telephone, date, note, objet } = req.body;
 
     try {
         const client = await prisma.client.update({
@@ -85,7 +85,7 @@ const updateClient = async (req, res) => {
             data: {
                 nom,
                 postnom,
-                numero_telephone,
+                telephone,
                 date,
                 note,
                 objet

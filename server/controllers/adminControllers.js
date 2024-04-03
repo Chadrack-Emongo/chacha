@@ -5,7 +5,6 @@ const express = require("express");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const app = express();
-const router = require("../Routers/contratRoutes");
 
 app.use(cors());
 
@@ -238,16 +237,16 @@ const readAdmin = async (req, res) => {
 // updateAdmin
 const updateAdmin = async (req, res) => {
     const { id } = req.params;
-    const { nom, postnom, numero_telephone, email, username, password } = req.body;
+    const { nom, postnom, telephone, email, username, password } = req.body;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 8);
         const admin = await prisma.admin.update({
-            where: { id_admin: parseInt(id) },
+            where: { id_admin: parseInt(id) }, 
             data: {
                 nom,
                 postnom,
-                numero_telephone,
+                telephone,
                 email,
                 username,
                 password: hashedPassword
@@ -262,17 +261,16 @@ const updateAdmin = async (req, res) => {
 // deleteAdmin
 const deleteAdmin = async (req, res) => {
     const id = parseInt(req.params.id);
-    console.log("id : ", id);
-    try {
-        const admin = await prisma.admin.delete({
-            where: { id_admin: id }
-        }).then();
-        res.json({ message: 'Admin supprimé avec succès !' });
+    try { 
+        await prisma.$transaction([
+            prisma.token.deleteMany({ where: { id_admin: id } }),
+            prisma.admin.delete({ where: { id_admin: id } })
+        ]);
+        res.json({ message: 'Admin supprimés avec succès !' });
     } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la suppression de l’admin.', error });
+        res.status(500).json({ message: 'Erreur lors de la suppression de l’admin', error });
     }
 };
-
 
 module.exports = {
     signInAdmin,
