@@ -1,3 +1,4 @@
+const express= require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -9,7 +10,7 @@ const authenticateJWT = (req, res, next) => {
     if (authHeader) {
       const token = authHeader.split(' ')[1];
   
-      jwt.verify(token, secretKey, (err, user) => {
+      jwt.verify(token, SECRET_KEY, (err, user) => {
         if (err) {
           return res.sendStatus(403);
         }

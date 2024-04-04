@@ -13,7 +13,7 @@ export default function App({ children }) {
       <div className='p-5'>
         <div className='mb-8 flex justify-between bg-slate-800 p-3'>
           <div className='flex justify-between bg-slate-800'>
-            <Link to="/">
+            <Link to="/accueil">
               <Title styles="bg-slate-800 -ml-1  w-64 rounded-xl text-white font-black font-[lemon] ml-5  text-4xl" Title="Infinity" />
             </Link>
           </div>

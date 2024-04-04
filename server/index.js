@@ -1,15 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const crypto = require('crypto');
-const dotenv = require('dotenv').config();
-const generateSecreteKey= require ('./controllers/generateSecretKey')
 const routeleControllers = require('./controllers/adminControllers');
 const routeClient= require('./Routers/routeClient')
-const authRoute = require('./Routers/authRoute');
 const contratController = require('./controllers/contratController');
 const app = express();
 const port = 8002;
-const secretKeys= process.env.SECRET_KEY;
 
 
 app.use(express.json());
@@ -48,8 +43,6 @@ app.post('/createContrat', contratController.createContrat);
 
 // Enregistrer un paiement
 app.post('/:contratId/paiements', contratController.enregistrerPaiement);
-
-
 
 app.listen(port, () => {
   console.log(`Serveur en écoute sur le port ${port}`);

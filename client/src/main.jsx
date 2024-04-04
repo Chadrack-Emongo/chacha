@@ -13,40 +13,45 @@ import Admin from './Admin.jsx';
 import Connexion from './Connexion.jsx';
 import ListeAdmin from './ListeAdmin.jsx';
 import ListeClient from './ListeClient.jsx';
-import CreerContratClient from './Contrat.jsx';
+import Contrat from './Contrat.jsx';
 import Parametre from './Parametre.jsx';
 import Client from './Client.jsx';
 
 const router = createBrowserRouter([
+
   {
     path: "/",
+    element: <Connexion />,
+  },
+  {
+    path: "/accueil",
     element: <App><Outlet /></App>,
     children: [
       {
-        path: "/",
+        path: "/accueil",
         element: <Accueil />,
       }, {
-        path: "/admin",
+        path: "accueil/admin",
         element: <Admin />,
       },
       {
-        path: "/listeAdmin",
+        path: "accueil/listeAdmin",
         element: <ListeAdmin />,
       },
       {
-        path: "/client",
+        path: "accueil/client",
         element: <Client />
       },
       {
-        path: "/listeClient",
+        path: "accueil/listeClient",
         element: <ListeClient />,
       },
       {
-        path: "/contrat",
-        element: <CreerContratClient />,
+        path: "accueil/contrat",
+        element: <Contrat />,
       },
       {
-        path: "/parametre",
+        path: "accueil/parametre",
         element: <Parametre />,
       }
     ]
@@ -56,10 +61,6 @@ const router = createBrowserRouter([
     element: <Signin />,
   },
 
-  {
-    path: "/connexion",
-    element: <Connexion />,
-  }
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
